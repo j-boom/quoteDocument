@@ -2,7 +2,7 @@
 # This code generates a polished JCI quote from simple prompts... speeding up quote generation time.
 # This code makes use of Python-docx v0.8.7.
 
-def makeQuote(excelQuote):
+def makeQuote():
     #import libraries
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
@@ -11,6 +11,8 @@ def makeQuote(excelQuote):
     from quoteFunctions import set_col_widths, getScopeList, getClarifyList, updateTracker
     from docx.shared import Inches
     from TandCs import TandCs
+
+    excelQuote = os.path.join("C:\\users\\jbergrj\\OneDrive - Johnson Controls\\Quotes\\quoteInput.xlsx")
 
 # Open a new workbook
     wb = openpyxl.load_workbook(excelQuote)
@@ -58,7 +60,7 @@ def makeQuote(excelQuote):
     doc.add_paragraph(f'\n{scopeIntro}\n')
     doc.add_paragraph("Scope of Work:", "Quote Section")
 
-    scopeList = getScopeList(excelFile)
+    scopeList = getScopeList(excelQuote)
     cellStart = scopeList.pop()
 
     for item in scopeList:
@@ -78,7 +80,7 @@ def makeQuote(excelQuote):
     p = doc.add_paragraph("Drywall, painting, and insulation work is excluded unless specified in the scope of work", "Bullet List")
     p = doc.add_paragraph("Johnson Controls reserves the right to progress bill for this work", "Bullet List")
 
-    clarifyList = getClarifyList(cellStart, excelFile)
+    clarifyList = getClarifyList(cellStart, excelQuote)
 
     for item in clarifyList:
         doc.add_paragraph(item, "Bullet List")
@@ -89,7 +91,7 @@ def makeQuote(excelQuote):
     p = doc.add_paragraph("~", "Jim Signature")
     p.paragraph_format.left_indent = Inches(3.1)
     p.paragraph_format.keep_with_next = True
-    signatureBlock = ["Jim Bergren", "Account Representative, Washington, DC", "Johnson Controls, Inc."]
+    signatureBlock = ["Jim Bergren", "Account Representative, Washington, DC", "Johnson Controls, Inc.", "james.bergren@jci.com"]
 
     for item in signatureBlock:
         p = doc.add_paragraph(item)
@@ -153,6 +155,8 @@ def makeQuote(excelQuote):
     for each in TandCs:
         p = doc.add_paragraph(each, "Terms and Conditions")
 
+
+####-----------------------------------------------------------------OUTPUT INTO QUOTE----------------------------------------------------------------###
     #Save the Files
     outputPath = os.path.join("C:\\users\\jbergrj\\OneDrive - Johnson Controls\\Quotes")
     os.chdir(outputPath)
@@ -162,9 +166,11 @@ def makeQuote(excelQuote):
     os.chdir(xlOutputPath)
     wb.save(xlNumber)
 
+###-----------------------------------------------------------------TRACK QUOTE INTO TRACKER-------------------------------------------------------------###
     #populate L&M Tracker
     updateTracker(quoteID, projectName, customer, contact, price)
 
     print ("Quote Generated")
-excelFile = str(input("Enter an excel filename to generate a quote: "))
-makeQuote(excelFile)
+
+
+makeQuote()

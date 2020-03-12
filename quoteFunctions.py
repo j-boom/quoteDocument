@@ -47,7 +47,7 @@ def updateTracker(quoteID, quoteTitle, companyName, contact, cost):
     while sheet.cell(rowNum,2).value != None:
         allQuotes.append(sheet.cell(rowNum,2).value)
         rowNum += 1
-    print (allQuotes)
+    #print (allQuotes)
 
     if quoteID in allQuotes:
         print("This quote already exists")
